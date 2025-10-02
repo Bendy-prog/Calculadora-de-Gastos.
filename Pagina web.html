@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora de Gastos (COP) 💰</title>
+    <style>
+        /* ESTILO GENERAL */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--body-bg, #f0f4f7);
+            color: var(--text-color, #333);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: var(--container-bg, #fff);
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: #1a73e8;
+        }
+        .form-group {
+            margin-bottom: 25px;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        label {
+            font-size: 16px;
+            color: var(--text-color, #333);
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #1a73e8;
+            border-radius: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            color: #333;
+        }
+        input[type="number"]:focus, input[type="text"]:focus, select:focus {
+            border-color: #0c61af;
+            outline: none;
+        }
+        /* ESTILO BOTONES CON BRILLO */
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: background-color 0.3s ease, transform 0.1s;
+            margin-top: 10px;
+            z-index: 1;
+            min-height: 44px; /* Tamaño mínimo táctil */
+        }
+        button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: transform 0.5s ease;
+            transform: skewX(-20deg);
+        }
+        button:hover::after {
+            transform: translate(200%, 0) skewX(-20deg);
+        }
+        button.delete-all {
+            background-color: #d93025;
+        }
+        button.delete-all:hover {
+            background-color: #b31412;
+        }
+        button:hover {
+            background-color: #0c61af;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(26, 115, 232, 0.4);
+        }
+        /* ESTILO RESULTADOS Y GASTOS */
+        .result {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            padding: 15px;
+            background-color: #0F9D58;
+            border-radius: 10px;
+        }
+        .result.deficit {
+            background-color: #d93025;
+        }
+        .gastos-list {
+            margin-top: 30px;
+            background-color: var(--gastos-list-bg, #fff);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+        .gastos-list h3 {
+            color: var(--text-color, #333);
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .gastos-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background-color: var(--li-bg, #f5f5f5);
+            border-left: 5px solid #1a73e8;
+            border-radius: 8px;
+            color: var(--text-color, #333);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .gastos-list li span {
+            font-weight: 500;
+        }
+        .gastos-list li .category-tag {
+            font-size: 0.8em;
+            padding: 3px 8px;
+            background-color: var(--tag-bg, #e6e6e6);
+            color: #333;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .gastos-list .total-gastos {
+            font-weight: bold;
+            font-size: 20px;
+            color: #d93025;
+            text-align: right;
+            padding-top: 15px;
+            border-top: 1px dashed #ccc;
+            margin-top: 15px;
+        }
+        #resumenCategorias {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--summary-bg, #e8f0fe);
+            border-radius: 8px;
+        }
+        #resumenCategorias div {
+            padding: 5px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        #resumenCategorias strong {
+            color: #1a73e8;
+        }
+
+        /* ====== Mejoras para móvil ====== */
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            input[type="number"], input[type="text"], select, button {
+                font-size: 16px;
+                padding: 12px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .gastos-list li {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .gastos-list li button {
+                align-self: flex-end;
+                width: auto;
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+
+            .result {
+                font-size: 18px;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Gastos (COP) 💰</h1>
+
+        <div class="color-selector-group">
+            <label for="colorFondo">Elige el color de fondo:</label>
+            <select id="colorFondo" onchange="cambiarFondo()">
+                <option value="blanco">Fondo Blanco</option>
+                <option value="negro">Fondo Negro</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="capitalInicial">Dinero Inicial (COP):</label>
+            <input type="number" id="capitalInicial" placeholder="Cuánto tienes" value="0" required>
+            
+            <label for="egresoInicial">Gasto o Inversión (Opcional):</label>
+            <input type="number" id="egresoInicial" placeholder="Monto grande a descontar (Ej: Arriendo)" value="0">
+            
+            <button type="button" onclick="calcularCapital()">Calcular Dinero Neto</button>
+        </div>
+        <div class="result" id="resultadoCapital">
+            Dinero Neto: $0.00 COP
+        </div>
+
+        <div class="form-group">
+            <label for="descripcionGasto">Qué fue (Ej: bus, almuerzo):</label>
+            <input type="text" id="descripcionGasto" placeholder="Escribe el concepto" required>
+            
+            <label for="categoriaGasto">Tipo de Gasto:</label>
+            <select id="categoriaGasto" required>
+                <option value="Sin Categoría">Sin Categoría</option>
+                <option value="Comida">Comida</option>
+                <option value="Transporte">Transporte</option>
+                <option value="Ocio">Ocio</option>
+                <option value="Vivienda">Vivienda</option>
+                <option value="Servicios">Servicios</option>
+                <option value="Otro">Otro</option>
+            </select>
+
+            <label for="montoGasto">Monto gastado (COP):</label>
+            <input type="number" id="montoGasto" placeholder="Escribe el monto" required>
+            <button type="button" onclick="agregarGasto()">Añadir Gasto</button>
+        </div>
+
+        <div class="gastos-list" id="listaGastos">
+            <h3>Lista de Gastos</h3>
+
+            <label for="filtroGasto">Ver solo gastos de:</label>
+            <select id="filtroGasto" onchange="renderizarGastos()">
+                <option value="Todos">Mostrar Todos</option>
+                <option value="Comida">Comida</option>
+                <option value="Transporte">Transporte</option>
+                <option value="Ocio">Ocio</option>
+                <option value="Vivienda">Vivienda</option>
+                <option value="Servicios">Servicios</option>
+                <option value="Otro">Otro</option>
+                <option value="Sin Categoría">Sin Categoría</option>
+            </select>
+
+            <ul id="gastosLista"></ul>
+
+            <div id="resumenCategorias">
+                <h4>Total por Tipo de Gasto</h4>
+            </div>
+
+            <div class="total-gastos" id="totalGastos">Total Gastado: $0.00 COP</div>
+            <button type="button" class="delete-all" onclick="limpiarGastos()">Borrar Todos los Gastos</button>
+        </div>
+    </div>
+
+    <script>
+        let capitalInicial = 0;
+        let egresoInicial = 0;
+        let capitalNeto = 0;
+        let totalGastos = 0;
+        const gastos = [];
+        let nextGastoId = 1;
+
+        function cambiarFondo() {
+            const seleccion = document.getElementById('colorFondo').value;
+            const root = document.documentElement.style;
+            
+            if (seleccion === 'negro') {
+                root.setProperty('--body-bg', '#000000');
+                root.setProperty('--text-color', '#ffffff');
+                root.setProperty('--container-bg', '#222222');
+                root.setProperty('--gastos-list-bg', '#2e2e2e');
+                root.setProperty('--li-bg', '#444444');
+                root.setProperty('--summary-bg', '#1c1c1c');
+            } else {
+                root.setProperty('--body-bg', '#f0f4f7');
+                root.setProperty('--text-color', '#333');
+                root.setProperty('--container-bg', '#fff');
+                root.setProperty('--gastos-list-bg', '#fff');
+                root.setProperty('--li-bg', '#f5f5f5');
+                root.setProperty('--summary-bg', '#e8f0fe');
+            }
+        }
+
+        function calcularCapital() {
+            capitalInicial = parseFloat(document.getElementById('capitalInicial').value) || 0;
+            egresoInicial = parseFloat(document.getElementById('egresoInicial').value) || 0; 
+            
+            capitalNeto = capitalInicial - egresoInicial - totalGastos;
+            actualizarResultadoCapital();
+        }
+
+        function actualizarResultadoCapital() {
+            const resultadoCapitalElement = document.getElementById('resultadoCapital');
+            resultadoCapitalElement.innerHTML = `Dinero Neto: ${formatearMoneda(capitalNeto)} COP`;
+            if (capitalNeto < 0) {
+                resultadoCapitalElement.classList.add('deficit');
+            } else {
+                resultadoCapitalElement.classList.remove('deficit');
+            }
+        }
+
+        function agregarGasto() {
+            const monto = parseFloat(document.getElementById('montoGasto').value) || 0;
+            const descripcion = document.getElementById('descripcionGasto').value.trim();
+            const categoria = document.getElementById('categoriaGasto').value;
+
+            if (monto <= 0 || descripcion === '' || categoria === '') {
+                alert('⚠️ Por favor, pon un monto, una descripción y un tipo de gasto.');
+                return;
+            }
+
+            const nuevoGasto = {
+                id: nextGastoId++,
+                monto: monto,
+                descripcion: descripcion,
+                categoria: categoria
+            };
+
+            gastos.push(nuevoGasto);
+            totalGastos += monto;
+            capitalNeto -= monto;
+
+            renderizarGastos(); 
+            document.getElementById('montoGasto').value = '';
+            document.getElementById('descripcionGasto').value = '';
+            document.getElementById('categoriaGasto').value = 'Sin Categoría';
+            actualizarTotalGastos();
+            actualizarResultadoCapital();
+        }
+
+        function eliminarGasto(idGasto) {
+            const index = gastos.findIndex(gasto => gasto.id === idGasto);
+
+            if (index !== -1) {
+                const montoEliminado = gastos[index].monto;
+
+                capitalNeto += montoEliminado;
+                totalGastos -= montoEliminado;
+
+                gastos.splice(index, 1);
+
+                renderizarGastos();
+                actualizarTotalGastos();
+                actualizarResultadoCapital();
+            }
+        }
+
+        function limpiarGastos() {
+            if (confirm('¿Seguro que quieres borrar TODOS los gastos? No podrás recuperarlos.')) {
+                capitalNeto += totalGastos;
+
+                gastos.length = 0;
+                totalGastos = 0;
+
+                renderizarGastos();
+                actualizarTotalGastos();
+                actualizarResultadoCapital();
+            }
+        }
+        
+        function renderizarGastos() {
+            const gastosLista = document.getElementById('gastosLista');
+            const filtroSeleccionado = document.getElementById('filtroGasto').value;
+            gastosLista.innerHTML = '';
+
+            const gastosFiltrados = gastos.filter(gasto => 
+                filtroSeleccionado === 'Todos' || gasto.categoria === filtroSeleccionado
+            );
+
+            if (gastosFiltrados.length === 0) {
+                 const li = document.createElement('li');
+                 li.style.borderLeft = '5px solid #ff9800';
+                 li.textContent = filtroSeleccionado === 'Todos' ? 'No hay gastos todavía.' : `No hay gastos de ${filtroSeleccionado}.`;
+                 gastosLista.appendChild(li);
+            }
+
+            gastosFiltrados.forEach(gasto => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>
+                        <span class="category-tag">${gasto.categoria}</span> 
+                        ${gasto.descripcion}: <strong>${formatearMoneda(gasto.monto)} COP</strong>
+                    </span>
+                    <button class="delete-btn" onclick="eliminarGasto(${gasto.id})">Borrar</button>
+                `;
+                gastosLista.appendChild(li);
+            });
+            
+            generarResumenCategorias();
+        }
+
+        function generarResumenCategorias() {
+            const resumenContainer = document.getElementById('resumenCategorias');
+            let resumenHTML = '<h4>Total por Tipo de Gasto</h4>';
+            
+            const totales = gastos.reduce((acc, gasto) => {
+                acc[gasto.categoria] = (acc[gasto.categoria] || 0) + gasto.monto;
+                return acc;
+            }, {});
+
+            for (const categoria in totales) {
+                resumenHTML += `<div><span>${categoria}:</span> <strong>${formatearMoneda(totales[categoria])} COP</strong></div>`;
+            }
+
+            resumenContainer.innerHTML = resumenHTML;
+        }
+
+        function actualizarTotalGastos() {
+            const totalGastosElement = document.getElementById('totalGastos');
+            totalGastosElement.textContent = `Total Gastado: ${formatearMoneda(totalGastos)} COP`;
+        }
+
+        function formatearMoneda(valor) {
+            return valor.toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // Inicialización
+        cambiarFondo();
+        calcularCapital();
+        renderizarGastos();
+    </script>
+</body>
+</html>
