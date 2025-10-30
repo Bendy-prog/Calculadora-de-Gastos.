@@ -242,6 +242,271 @@
                 <option value="Transporte">Transporte</option>
                 <option value="Ocio">Ocio</option>
                 <option value="Vivienda">Vivienda</option>
+                <option value="Servicios">Serv<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GastoSmart 💰</title>
+    <style>
+        /* ESTILO GENERAL */
+        :root {
+            --body-bg: #f0f4f7;
+            --container-bg: #fff;
+            --text-color: #333;
+            --gastos-list-bg: #fff;
+            --li-bg: #f5f5f5;
+            --tag-bg: #e6e6e6;
+            --summary-bg: #e8f0fe;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: var(--container-bg);
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: #1a73e8;
+        }
+        .form-group {
+            margin-bottom: 25px;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        label {
+            font-size: 16px;
+            color: var(--text-color);
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #1a73e8;
+            border-radius: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            color: var(--text-color);
+            background-color: var(--container-bg);
+        }
+        input[type="number"]:focus, input[type="text"]:focus, select:focus {
+            border-color: #0c61af;
+            outline: none;
+        }
+        /* ESTILO BOTONES CON BRILLO */
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: background-color 0.3s ease, transform 0.1s;
+            margin-top: 10px;
+            z-index: 1;
+            min-height: 44px;
+        }
+        button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: transform 0.5s ease;
+            transform: skewX(-20deg);
+        }
+        button:hover::after {
+            transform: translate(200%, 0) skewX(-20deg);
+        }
+        button.delete-all {
+            background-color: #d93025;
+        }
+        button.delete-all:hover {
+            background-color: #b31412;
+        }
+        button:hover {
+            background-color: #0c61af;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(26, 115, 232, 0.4);
+        }
+        .delete-item-btn {
+            background-color: #d93025;
+            width: auto !important;
+            padding: 6px 10px !important;
+            font-size: 14px !important;
+            margin-top: 0 !important;
+        }
+        .delete-item-btn:hover {
+            background-color: #b31412;
+        }
+        /* ESTILO RESULTADOS Y GASTOS */
+        .result {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            padding: 15px;
+            background-color: #0F9D58;
+            border-radius: 10px;
+        }
+        .result.deficit {
+            background-color: #d93025;
+        }
+        .gastos-list {
+            margin-top: 30px;
+            background-color: var(--gastos-list-bg);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+        .gastos-list h3 {
+            color: var(--text-color);
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .gastos-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background-color: var(--li-bg);
+            border-left: 5px solid #1a73e8;
+            border-radius: 8px;
+            color: var(--text-color);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .gastos-list li span {
+            font-weight: 500;
+        }
+        .gastos-list li .category-tag {
+            font-size: 0.8em;
+            padding: 3px 8px;
+            background-color: var(--tag-bg);
+            color: var(--text-color);
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .gastos-list .total-gastos {
+            font-weight: bold;
+            font-size: 20px;
+            color: #d93025;
+            text-align: right;
+            padding-top: 15px;
+            border-top: 1px dashed #ccc;
+            margin-top: 15px;
+        }
+        #resumenCategorias {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--summary-bg);
+            border-radius: 8px;
+        }
+        #resumenCategorias div {
+            padding: 5px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        #resumenCategorias strong {
+            color: #1a73e8;
+        }
+        /* ====== Mejoras para móvil ====== */
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            input[type="number"], input[type="text"], select, button {
+                font-size: 16px;
+                padding: 12px;
+            }
+            .form-group {
+                margin-bottom: 20px;
+            }
+            .gastos-list li {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .gastos-list li button {
+                align-self: flex-end;
+                width: auto;
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+            .result {
+                font-size: 18px;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GastoSmart 💰</h1>
+
+        <div class="color-selector-group">
+            <label for="colorFondo">Elige el color de fondo:</label>
+            <select id="colorFondo" onchange="cambiarFondo()">
+                <option value="blanco">Fondo Blanco</option>
+                <option value="negro">Fondo Negro</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="capitalInicial">Dinero Inicial (COP):</label>
+            <input type="number" id="capitalInicial" placeholder="Cuánto tienes" value="0" required>
+            
+            <label for="egresoInicial">Gasto o Inversión (Opcional):</label>
+            <input type="number" id="egresoInicial" placeholder="Monto grande a descontar (Ej: Arriendo)" value="0">
+            
+            <button type="button" onclick="calcularCapital()">Calcular Dinero Neto</button>
+        </div>
+        <div class="result" id="resultadoCapital">
+            Dinero Neto: $0.00 COP
+        </div>
+
+        <div class="form-group">
+            <label for="descripcionGasto">Qué fue (Ej: bus, almuerzo):</label>
+            <input type="text" id="descripcionGasto" placeholder="Escribe el concepto" required>
+            
+            <label for="categoriaGasto">Tipo de Gasto:</label>
+            <select id="categoriaGasto" required>
+                <option value="Sin Categoría">Sin Categoría</option>
+                <option value="Comida">Comida</option>
+                <option value="Transporte">Transporte</option>
+                <option value="Ocio">Ocio</option>
+                <option value="Vivienda">Vivienda</option>
                 <option value="Servicios">Servicios</option>
                 <option value="Otro">Otro</option>
             </select>
@@ -276,49 +541,189 @@
             <button type="button" class="delete-all" onclick="limpiarGastos()">Borrar Todos los Gastos</button>
         </div>
     </div>
-<script>
-    // Función para cambiar el fondo
-    function cambiarFondo() {
-        const color = document.getElementById('colorFondo').value;
-        const root = document.documentElement;
-
-        if (color === 'negro') {
-            // Tema oscuro
-            root.style.setProperty('--body-bg', '#121212');
-            root.style.setProperty('--container-bg', '#1e1e1e');
-            root.style.setProperty('--text-color', '#f5f5f5');
-            root.style.setProperty('--gastos-list-bg', '#2a2a2a');
-            root.style.setProperty('--li-bg', '#333');
-            root.style.setProperty('--tag-bg', '#444');
-            root.style.setProperty('--summary-bg', '#2a2a2a');
-        } else {
-            // Tema claro
-            root.style.setProperty('--body-bg', '#f0f4f7');
-            root.style.setProperty('--container-bg', '#fff');
-            root.style.setProperty('--text-color', '#333');
-            root.style.setProperty('--gastos-list-bg', '#fff');
-            root.style.setProperty('--li-bg', '#f5f5f5');
-            root.style.setProperty('--tag-bg', '#e6e6e6');
-            root.style.setProperty('--summary-bg', '#e8f0fe');
-        }
-    }
-
-    // Si quieres que recuerde el color al recargar:
-    document.addEventListener('DOMContentLoaded', () => {
-        const guardado = localStorage.getItem('temaFondo') || 'blanco';
-        document.getElementById('colorFondo').value = guardado;
-        cambiarFondo();
-    });
-
-    document.getElementById('colorFondo').addEventListener('change', () => {
-        const valor = document.getElementById('colorFondo').value;
-        localStorage.setItem('temaFondo', valor);
-        cambiarFondo();
-    });
-</script>
 
     <script>
-        // (El mismo JavaScript que ya tenías)
+        let capitalNeto = 0;
+        let gastos = JSON.parse(localStorage.getItem('gastos')) || [];
+
+        function formatoMoneda(cantidad) {
+            return new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0
+            }).format(cantidad);
+        }
+
+        function cambiarFondo() {
+            const color = document.getElementById('colorFondo').value;
+            const root = document.documentElement;
+
+            if (color === 'negro') {
+                root.style.setProperty('--body-bg', '#121212');
+                root.style.setProperty('--container-bg', '#1e1e1e');
+                root.style.setProperty('--text-color', '#f5f5f5');
+                root.style.setProperty('--gastos-list-bg', '#2a2a2a');
+                root.style.setProperty('--li-bg', '#333');
+                root.style.setProperty('--tag-bg', '#444');
+                root.style.setProperty('--summary-bg', '#2a2a2a');
+                localStorage.setItem('temaFondo', 'negro');
+            } else {
+                root.style.setProperty('--body-bg', '#f0f4f7');
+                root.style.setProperty('--container-bg', '#fff');
+                root.style.setProperty('--text-color', '#333');
+                root.style.setProperty('--gastos-list-bg', '#fff');
+                root.style.setProperty('--li-bg', '#f5f5f5');
+                root.style.setProperty('--tag-bg', '#e6e6e6');
+                root.style.setProperty('--summary-bg', '#e8f0fe');
+                localStorage.setItem('temaFondo', 'blanco');
+            }
+        }
+
+        function calcularCapital() {
+            const capitalInicial = parseFloat(document.getElementById('capitalInicial').value) || 0;
+            const egresoInicial = parseFloat(document.getElementById('egresoInicial').value) || 0;
+            const totalGastado = gastos.reduce((acc, gasto) => acc + gasto.monto, 0);
+
+            capitalNeto = capitalInicial - egresoInicial;
+            const saldoActual = capitalNeto - totalGastado;
+
+            const resultadoCapitalDiv = document.getElementById('resultadoCapital');
+            resultadoCapitalDiv.innerHTML = `Dinero Neto: ${formatoMoneda(capitalNeto)}<br> Saldo Actual: ${formatoMoneda(saldoActual)}`;
+
+            if (saldoActual < 0) {
+                resultadoCapitalDiv.classList.add('deficit');
+            } else {
+                resultadoCapitalDiv.classList.remove('deficit');
+            }
+
+            localStorage.setItem('capitalInicial', capitalInicial);
+            localStorage.setItem('egresoInicial', egresoInicial);
+        }
+
+        function agregarGasto() {
+            const descripcion = document.getElementById('descripcionGasto').value.trim();
+            const categoria = document.getElementById('categoriaGasto').value;
+            const monto = parseFloat(document.getElementById('montoGasto').value);
+
+            if (!descripcion || isNaN(monto) || monto <= 0) {
+                alert('Por favor, ingresa una descripción válida y un monto mayor a cero.');
+                return;
+            }
+
+            const nuevoGasto = {
+                id: Date.now(),
+                descripcion,
+                categoria,
+                monto
+            };
+
+            gastos.push(nuevoGasto);
+            guardarYRenderizar();
+
+            // Limpiar formulario de gasto
+            document.getElementById('descripcionGasto').value = '';
+            document.getElementById('montoGasto').value = '';
+            document.getElementById('categoriaGasto').value = 'Sin Categoría';
+        }
+
+        function eliminarGasto(id) {
+            gastos = gastos.filter(gasto => gasto.id !== id);
+            guardarYRenderizar();
+        }
+
+        function limpiarGastos() {
+            if (confirm('¿Estás seguro de que quieres borrar TODOS los gastos? Esta acción es irreversible.')) {
+                gastos = [];
+                guardarYRenderizar();
+            }
+        }
+
+        function calcularTotalGastado() {
+            return gastos.reduce((acc, gasto) => acc + gasto.monto, 0);
+        }
+
+        function generarResumenCategorias() {
+            const resumen = gastos.reduce((acc, gasto) => {
+                acc[gasto.categoria] = (acc[gasto.categoria] || 0) + gasto.monto;
+                return acc;
+            }, {});
+
+            const resumenDiv = document.getElementById('resumenCategorias');
+            let html = '<h4>Total por Tipo de Gasto</h4>';
+
+            for (const categoria in resumen) {
+                html += `
+                    <div>
+                        <span>${categoria}:</span>
+                        <strong>${formatoMoneda(resumen[categoria])}</strong>
+                    </div>
+                `;
+            }
+
+            resumenDiv.innerHTML = html;
+        }
+
+        function renderizarGastos() {
+            const filtro = document.getElementById('filtroGasto').value;
+            const listaUL = document.getElementById('gastosLista');
+            listaUL.innerHTML = '';
+
+            const gastosFiltrados = filtro === 'Todos'
+                ? gastos
+                : gastos.filter(gasto => gasto.categoria === filtro);
+
+            if (gastosFiltrados.length === 0) {
+                listaUL.innerHTML = '<li style="justify-content: center; border-left: none; background-color: transparent;">No hay gastos para mostrar en esta categoría.</li>';
+            } else {
+                gastosFiltrados.forEach(gasto => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <div>
+                            <span class="category-tag">${gasto.categoria}</span>
+                            <span>${gasto.descripcion}</span>
+                        </div>
+                        <div>
+                            <strong>${formatoMoneda(gasto.monto)}</strong>
+                            <button class="delete-item-btn" onclick="eliminarGasto(${gasto.id})">X</button>
+                        </div>
+                    `;
+                    listaUL.appendChild(li);
+                });
+            }
+
+            // Actualizar total y resumen
+            const totalGastado = calcularTotalGastado();
+            document.getElementById('totalGastos').textContent = `Total Gastado: ${formatoMoneda(totalGastado)}`;
+            calcularCapital();
+            generarResumenCategorias();
+        }
+
+        function guardarYRenderizar() {
+            localStorage.setItem('gastos', JSON.stringify(gastos));
+            renderizarGastos();
+        }
+
+        // Inicialización al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cargar y aplicar tema de color
+            const guardadoTema = localStorage.getItem('temaFondo') || 'blanco';
+            document.getElementById('colorFondo').value = guardadoTema;
+            cambiarFondo();
+
+            // Cargar valores iniciales
+            const savedCapital = localStorage.getItem('capitalInicial');
+            const savedEgreso = localStorage.getItem('egresoInicial');
+
+            if (savedCapital !== null) {
+                document.getElementById('capitalInicial').value = savedCapital;
+            }
+            if (savedEgreso !== null) {
+                document.getElementById('egresoInicial').value = savedEgreso;
+            }
+
+            // Cargar y renderizar gastos
+            renderizarGastos();
+        });
     </script>
 </body>
 </html>
